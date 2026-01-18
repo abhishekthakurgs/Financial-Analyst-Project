@@ -6,14 +6,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 # plt.style.use('fivethirtyeight')
 
-#######u have the data set na uski link neeche wale me paste kardo
-#similarly plt.save fig me bhi address lagega 
-
-df = pd.read_csv("D:\Daily Household Transactions.csv")
+#INSERT THE CSV PATH IN THE BELOW LINE
+df = pd.read_csv("D:\projects_data\Daily_Household_Transactions.csv")
 df.dropna()
 
 
-#data filtering
+# Data Filtering
 
 print(df.describe().round(2))
 print("\nMissing values:")
@@ -45,7 +43,7 @@ df['Month_Name'] = pd.to_datetime(df['Month'], format='%m').dt.month_name()
 print(df.head())
 print(df.dtypes)
 
-#Data analysis
+# Data Analysis
 
 total_expense = df[df['Income/Expense'] == 'Expense']['Amount'].sum()
 print("Total Expense-" ,total_expense)
@@ -53,16 +51,14 @@ print("Total Expense-" ,total_expense)
 total_income = df[df['Income/Expense'] == 'Income']['Amount'].sum()
 print("Total Income- ", total_income)
 
-#C1- Number of transaction
+# Number of transaction
 sns.countplot(data = df, x = "Income/Expense")
 plt.title('Number of transaction')
 plt.show()
-plt.savefig('01_Number_of_transaction.png')
 
-#C2- 
+# Income/Expense with Amount
 sns.boxplot(data = df, x = "Amount", y = "Income/Expense")
 plt.show()
-plt.savefig('02_category_spending_bar.png')
 
 total_saving= total_income-total_expense
 print('Total savings-', total_saving)
@@ -77,7 +73,7 @@ print('Highest Transaction-', highest)
 print('Lowest Transaction-', lowest)
 print('Average transaction-', average)
 
-#Category Analysis
+# Category Analysis
 
 catergory_wise= df[df['Income/Expense'] == 'Expense'].groupby(['Category'])['Amount'].agg([
                 ('Total','sum'),('Average', 'mean'),('Count', 'count'),('Max', 'max'),('Min', 'min')
@@ -87,7 +83,7 @@ catergory_wise['Percentage'] = (catergory_wise['Total'] / total_expense * 100).r
 catergory_wise = catergory_wise.sort_values('Total', ascending=False)
 print('Category wise Summary\n', catergory_wise)
 
-#C3-Number of Transactions per Payment Mode
+# Number of Transactions per Payment Mode
 sns.countplot(data = df, x = "Mode", order = df["Mode"].value_counts().iloc[:3].index)
 plt.title('Number of Transactions per Payment Mode')
 plt.xlabel('Mode of Transaction')
@@ -95,7 +91,7 @@ plt.ylabel('Number of Transactions')
 plt.tight_layout()
 plt.show()
 
-#C4- Number of Transactions per Category
+# Number of Transactions per Category
 sns.countplot(data = df, x = "Category", order = df["Category"].value_counts().iloc[:5].index)
 plt.title('Number of Transactions per Category')
 plt.xlabel('Category of Transaction')
@@ -103,7 +99,7 @@ plt.ylabel('Number of Transactions')
 plt.tight_layout()
 plt.show()
 
-#C5- Number of Transactions per SubCategory
+# Number of Transactions per SubCategory
 sns.countplot(data = df, x = "Subcategory", order = df["Subcategory"].value_counts().iloc[:10].index)
 plt.xticks(rotation= 90)
 plt.title('Number of Transactions per Subcategory')
@@ -114,8 +110,7 @@ plt.show()
 
 category_totals= catergory_wise['Total'].sort_values(ascending= False)
 
-#C6- Total spending by category
-# plt.figure(figsize=(12, 6))
+# Total spending by category
 plt.bar(category_totals.index, category_totals.values, color='steelblue')
 plt.title('Total Spending by Category')
 plt.xlabel('Category')
@@ -124,7 +119,7 @@ plt.xticks(rotation=90)
 plt.tight_layout()
 plt.show()
 
-#C7- Spending Distribution by Category(PIE)
+# Spending Distribution by Category(PIE)
 plt.figure(figsize=(8,8))
 category_totals_updated= category_totals.sort_values(ascending=False).head(10)
 plt.pie(category_totals_updated.values, labels=category_totals_updated.index, 
@@ -134,33 +129,31 @@ plt.axis('equal')
 plt.tight_layout()
 plt.show()
 
-#C8- Spending Distribution by Category(BOX) 
+# Spending Distribution by Category(BOX) 
 plt.figure(figsize=(12, 6))
 sns.boxplot(data=df[df['Income/Expense'] == 'Expense'], y='Category', x='Amount', order = df["Category"].value_counts().iloc[:5].index, palette='Set2')
 plt.title('Amount Distribution by Category')
 plt.xlabel('Category')
 plt.ylabel('Amount')
-# plt.xticks(rotation=90)
 plt.tight_layout()
 plt.show()
 
-#C9-Spending Distribution by SubCategory
+# Spending Distribution by SubCategory
 plt.figure(figsize = (12,6))
 sns.boxplot(data = df, x = "Amount", y = "Subcategory", order =df["Subcategory"].value_counts().iloc[:10].index)
 plt.title('Amount Distribution by SubCategory')
 plt.xlabel('SubCategory')
 plt.ylabel('Amount')
-# plt.xticks(rotation=90)
 plt.tight_layout()
 plt.show()
 
-#Monthly Analysis
+# Monthly Analysis
 
 monthly_expenses= (df[df['Income/Expense'] == 'Expense'].groupby(['Month_Name'])['Amount'].sum().reindex(['January','February','March','April','May','June',
            'July','August','September','October','November','December']).reset_index())
 print('Monthly Expenses \n', monthly_expenses)
 
-#c10- Expenses per month
+# Expenses per month
 sns.barplot(data= monthly_expenses,x='Month_Name',y='Amount')
 plt.xticks(rotation= 90)
 plt.title('Expenses Per Month') 
@@ -169,7 +162,7 @@ plt.ylabel('Expense Amount')
 plt.tight_layout()
 plt.show()
 
-#C11- MOnthly spending Trend
+# MOnthly spending Trend
 plt.plot(monthly_expenses['Month_Name'],monthly_expenses['Amount'], 
          marker='o', linewidth=3, markersize=10, color='#2ecc71')
 plt.title('Monthly Spending Trend', fontweight='bold')
@@ -182,7 +175,7 @@ plt.show()
 # Daily trends
 daily_data = df[df['Income/Expense'] == 'Expense'].groupby(['Date'])['Amount'].sum()
 
-#C12- Daily Transaction Amount
+# Daily Transaction Amount
 plt.figure(figsize = (12,6))
 plt.plot(daily_data.index, daily_data.values, marker='o')
 plt.title('Daily Transaction Amounts')
@@ -191,8 +184,7 @@ plt.ylabel('Total Amount')
 plt.tight_layout()
 plt.show()
 
-#payment mode anlysis
-
+#Payment Mode Analysis
 
 payment_summary = df[df['Income/Expense'] == 'Expense'].groupby('Mode')['Amount'].agg([
     ('Total', 'sum'),('Average', 'mean'),('Count', 'count')
@@ -201,8 +193,8 @@ payment_summary = df[df['Income/Expense'] == 'Expense'].groupby('Mode')['Amount'
 payment_summary = payment_summary.sort_values('Total', ascending=False)
 print("\nPayment Mode Summary:\n ", payment_summary)
 
-#C13- Number of Transactions by Payment Mod
-# plt.figure(figsize=(10, 6))
+# Number of Transactions by Payment Mod
+
 sns.countplot(data=df[df['Income/Expense'] == 'Expense'], x='Mode', palette='viridis',
               order=df[df['Income/Expense'] == 'Expense']['Mode'].value_counts().index)
 plt.title('Number of Transactions by Payment Mode')
@@ -212,35 +204,35 @@ plt.xticks(rotation= 90)
 plt.tight_layout()
 plt.show()
 
-#C14-
+#Income/Expense per Payment mode
 sns.scatterplot(data = df,x = "Income/Expense", y = "Mode")
-#plt.title('')
+plt.title('Income/Expense per Payment mode')
 plt.ylabel('Payment Mode')
 plt.xlabel('Income/Expense')
 plt.tight_layout()
 plt.show()
 
-#neeche wala chal raha h but muessy
-#C15-Correlation Heatmap of Transaction Categories
-'''
-pivot_table = df.pivot_table(index='Date', columns='Category', values='Amount',aggfunc='sum', fill_value=0)
-correlation_matrix = pivot_table.corr()
+# Correlation Heatmap of Transaction Categories(Top 10)
 
-plt.figure(figsize=(12, 8))
-sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', linewidths=0.5)
-plt.title('Correlation Heatmap of Transaction Categories')
-plt.show()
-'''
 top_categories = (df.groupby('Category')['Amount'].sum().sort_values(ascending=False).head(10).index)
 pivot_table = df.pivot_table(index='Date',columns='Category',values='Amount',aggfunc='sum',fill_value=0)
 
 pivot_top = pivot_table[top_categories]
-
 correlation_matrix = pivot_top.corr().round(2)
 
 plt.figure(figsize=(10, 8))
-sns.heatmap(correlation_matrix,annot=True,fmt=".2f",cmap='coolwarm',linewidths=0.5,square=True)
+sns.heatmap(correlation_matrix,annot=True,fmt=".2f",cmap='coolwarm',linewidths=0.5,square=True,)
 
 plt.title('Correlation Heatmap of Top 10 Spending Categories')
 plt.tight_layout()
 plt.show()
+
+# Correlation heatmap for all the Transaction catergories
+
+# pivot_table = df.pivot_table(index='Date', columns='Category', values='Amount',aggfunc='sum', fill_value=0)
+# correlation_matrix = pivot_table.corr()
+
+# plt.figure(figsize=(12, 8))
+# sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap='coolwarm', linewidths=0.5)
+# plt.title('Correlation Heatmap of Transaction Categories')
+# plt.show()

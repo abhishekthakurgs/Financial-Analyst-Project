@@ -7,7 +7,9 @@ import numpy as np
 # plt.style.use('fivethirtyeight')
 # plt.style.use('seaborn-v0_8')
 
-df = pd.read_csv("D:\projects_data\salesforcourse-4fe2kehu.csv")
+# Insert the CSV file in the LINE below
+df = pd.read_csv("D:\projects_data\salesforcourse-4fe2kehu.csv") #insert the CSV in these brackets
+
 df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
 df.drop('column1', axis=1, inplace=True)
 print(df.dtypes)
@@ -21,16 +23,16 @@ df['year'] = df['year'].astype(int)
 df['quantity'] = df['quantity'].astype(int)
 
 df['date']= pd.to_datetime(df['date'])
+
 #Extract the year and month from the "Date" column
 df['year']=df['date'].dt.year
 df['year_month'] = df['date'].dt.strftime('%Y-%m')
 
-# Profit
+
 df['profit'] = df['revenue'] - df['cost']
-# Profit Margin
 df['profit_margin'] = (df['profit'] / df['revenue'] * 100).round(2)
 
-# Create Age Groups
+# Age Groups
 def age_group(age):
     if age < 26:
         return '18-25'
@@ -199,7 +201,6 @@ plt.show()
 # Top selling product for each Customer Age by Product Category
 
 df_grouped = (df.groupby(["customer_age", "product_category"])["quantity"].sum().reset_index())
-
 top_products = (df_grouped.loc[df_grouped.groupby("customer_age")["quantity"].idxmax()])
 
 plt.figure(figsize=(12, 6))
@@ -215,7 +216,6 @@ plt.show()
 
 # Top selling product for each Customer Age by Sub category
 df_subgrouped = (df.groupby(["customer_age", "sub_category"])["quantity"].sum().reset_index())
-
 top_products_sub = (df_subgrouped.loc[df_subgrouped.groupby("customer_age")["quantity"].idxmax()])
 
 plt.figure(figsize=(12, 6))
@@ -232,14 +232,14 @@ plt.show()
 country_sales =df.groupby('country')['profit'].sum().reset_index()
 
 plt.figure(figsize=(8, 8))
-plt.pie(country_sales['profit'],labels=country_sales['country'],autopct='%1.1f%%',startangle=90,  colors=plt.cm.Set3.colors)
+colors= ['#008fd5', '#fc4f30', '#e5ae37', '#6d904f' ]
+plt.pie(country_sales['profit'],labels=country_sales['country'],autopct='%1.1f%%',startangle=90,  colors=colors)
 plt.title('Profit Distribution by Country')
 plt.tight_layout()
 plt.show()
 
 # products purchased the most in each country 
 df_country = df.groupby(["country", "sub_category"])["quantity"].sum().reset_index()
-
 top_products_country = (df_country.loc[df_country.groupby("country")["quantity"].idxmax()])
 
 plt.figure(figsize=(12, 6))

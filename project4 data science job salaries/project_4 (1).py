@@ -6,14 +6,17 @@ import numpy as np
 from matplotlib import pyplot as plt
 #print(plt.style.available)
 plt.style.use('seaborn-v0_8')
-# 'seaborn-v0_8', 'seaborn-v0_8-bright','fivethirtyeight',  'seaborn-v0_8-deep', 'seaborn-v0_8-muted', 'seaborn-v0_8-notebook', 'seaborn-v0_8-paper', 'seaborn-v0_8-pastel'
+
+# Insert the CSV location in the line below
 df = pd.read_csv("D:\projects_data\Data_Science_Job_Salaries.csv")
+
 pd.set_option("display.max_columns", None)
 df.drop('Unnamed: 0', axis=1, inplace=True)
 
 print(df.head())
 
 print('No of missing values:', {sum(df.isna().sum())})
+df.dropna(inplace=True)
 
 print(f"Duplicate rows: {df.duplicated().sum()}")
 df.drop_duplicates(inplace=True)
@@ -22,11 +25,6 @@ print('Total_jobs: ', len(df))
 
 # Standardize column names
 df.columns = (df.columns.str.strip().str.replace(" ", "_"))
-
-print("\nMissing values:")
-print(df.isnull().sum())
-#print(df.head())
-df.dropna(inplace=True)
 
 df["experience_level"] = df["experience_level"].map({
     "EN": "Entry", "MI": "Mid", "SE": "Senior", "EX": "Executive"
@@ -44,11 +42,8 @@ df["job_type"] = df["remote_ratio"].map({
     0: "Onsite", 50: "Hybrid",100: "Remote"
 })
 
-# # Add a salary ratio feature
+# Add a salary ratio feature
 df['salary_ratio'] = df['salary'] / df['salary_in_usd']
-# # Group salaries by company size
-# grouped_salary =df.groupby('company_size')['salary_in_usd'].mean()
-# print(grouped_salary)
 
 # Key metrics
 total_jobs = len(df)
@@ -95,8 +90,6 @@ print(exp_stats)
 
 salary_by_experience = (df.groupby("experience_level")["salary"].mean().sort_values())
 
-# iske neeche wala khud banaya h 
-
 # plt.figure()
 # plt.bar(salary_by_experience.index, salary_by_experience.values)
 # plt.title("Average Salary by Experience Level")
@@ -105,18 +98,6 @@ salary_by_experience = (df.groupby("experience_level")["salary"].mean().sort_val
 # plt.tight_layout()
 # plt.show()
 
-#iske neeche wla according to pdf
-# plt.figure(figsize=(14, 7))
-# plt.subplot(1, 2, 1)
-# ax = sns.barplot(x=salary_by_experience.index, y=salary_by_experience)
-# ax.set_title('Mean Salary Vs Experience Level')
-# plt.subplot(1, 2, 2)
-# ax = sns.violinplot(data=df, x='experience_level', y='salary')
-# ax.set_title('Experience Level VS Salary')
-# plt.tight_layout()
-# plt.show()
-
-#iske neeche updated
 fig, axes = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
 sns.barplot(x=salary_by_experience.index,y=salary_by_experience.values,ax=axes[0])
@@ -131,12 +112,10 @@ axes[1].set_xlabel('Experience Level', fontsize=13)
 plt.tight_layout()
 plt.show()
 
-
 # Salary vs Employment Type
 salary_by_employment = (df.groupby("employment_type")["salary"].mean().sort_values())
 print('Average salary per employee type\n ', salary_by_employment)
 
-#khud se banaya h
 # plt.figure()
 # plt.bar(salary_by_employment.index, salary_by_employment.values)
 # plt.title("Average Salary by Employment Type")
@@ -145,20 +124,6 @@ print('Average salary per employee type\n ', salary_by_employment)
 # plt.tight_layout()
 # plt.show()
 
-#iske neeche wala will be accordint to pdf
-
-# plt.figure(figsize=(14, 7))
-# sns.set_palette('autumn')
-# plt.subplot(1, 2, 1)
-# ax = sns.barplot(x=salary_by_employment.index, y=salary_by_employment)
-# ax.set_title('Mean Salary Vs Employment Type')
-# plt.subplot(1, 2, 2)
-# ax = sns.boxplot(data=df, x='employment_type', y='salary')
-# ax.set_title('Employment Type VS Salary')
-# plt.tight_layout()
-# plt.show()
-
-#iske neeche updated
 fig, axes = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
 sns.barplot(x=salary_by_employment.index, y=salary_by_employment,ax=axes[0])
@@ -173,14 +138,10 @@ axes[1].set_xlabel('Employment Type', fontsize=13)
 plt.tight_layout()
 plt.show()
 
-
-
-
 # Salary vs Company Size
 salary_by_company_size = (df.groupby("company_size")["salary"].mean().sort_values())
 print('Average salary by company size\n',salary_by_company_size)
 
-#khudse
 # plt.figure()
 # plt.bar(salary_by_company_size.index, salary_by_company_size.values)
 # plt.title("Average Salary by Company Size")
@@ -189,20 +150,6 @@ print('Average salary by company size\n',salary_by_company_size)
 # plt.tight_layout()
 # plt.show()
 
-#pdf
-
-# plt.figure(figsize=(14, 7))
-# plt.subplot(1, 2, 1)
-# ax = sns.barplot(x=salary_by_company_size.index, y=salary_by_company_size)
-# ax.set_title('Mean Salary VS Company Size')
-# plt.subplot(1, 2, 2)
-# sns.set_palette('Set2')
-# ax = sns.boxenplot(data=df, x='company_size', y='salary')
-# ax.set_title('Company Size VS Salary')
-# plt.tight_layout()
-# plt.show()
-
-#iske neeche updated
 fig, axes = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
 sns.barplot(x=salary_by_company_size.index, y=salary_by_company_size,ax=axes[0])
@@ -216,7 +163,6 @@ axes[1].set_xlabel('Company Size', fontsize=13)
 
 plt.tight_layout()
 plt.show()
-
 
 # Salary vs Job Type (Remote / Hybrid / Onsite)
 
@@ -241,8 +187,6 @@ remote_by_exp = df.groupby(['experience_level', 'job_type']).size().unstack(fill
 print("\nRemote Work by Experience Level:")
 print(remote_by_exp)
 
-
-#khudse
 # plt.figure()
 # plt.bar(salary_by_job_type.index, salary_by_job_type.values)
 # plt.title("Average Salary by Job Type")
@@ -251,19 +195,6 @@ print(remote_by_exp)
 # plt.tight_layout()
 # plt.show()
 
-#pdf 
-
-# plt.figure(figsize=(14, 7))
-# plt.subplot(1,2,1)
-# ax = sns.barplot(x=salary_by_job_type.index, y=salary_by_job_type)
-# ax.set_title('Mean Salary VS Job Type', fontdict={'fontsize':16})
-# plt.subplot(1,2,2)
-# ax = sns.violinplot(data=df, x='job_type', y='salary')
-# ax.set_title('Job Type VS Salary')
-# plt.tight_layout()
-# plt.show()
-
-#iske neeche updated
 fig, axes = plt.subplots(1, 2, figsize=(14, 7), sharey=True)
 
 sns.barplot(x=salary_by_job_type.index, y=salary_by_job_type,ax=axes[0])
@@ -278,7 +209,7 @@ axes[1].set_xlabel('Job Type', fontsize=13)
 plt.tight_layout()
 plt.show()
 
-# # job type and company size VS salary
+# job type and company size VS salary
 
 plt.figure(figsize=(14, 7))
 sns.set_palette('Set2')
@@ -310,7 +241,7 @@ top_roles =df.groupby('job_title')['salary'].mean().sort_values(ascending=False)
 top_roles_filtered = top_roles[df["job_title"].value_counts()[top_roles.index] > 1].head(10)
 print('top 10 data science roles according to mean salary\n',top_roles_filtered.round(2))
 
-# #khudka
+
 # plt.figure()
 # plt.barh(top_roles_filtered.index, top_roles_filtered.values)
 # plt.title("Top 10 Highest Paying Data Science Roles")
@@ -318,8 +249,6 @@ print('top 10 data science roles according to mean salary\n',top_roles_filtered.
 # plt.gca().invert_yaxis()
 # plt.tight_layout()
 # plt.show()
-
-#pdf 
  
 plt.figure(figsize=(18, 5))
 # top 10 data science roles according to mean salary
@@ -339,19 +268,18 @@ ax.set_title('Top 10 data science roles with highest number of openings', fontsi
 plt.tight_layout()
 plt.show()
 
-
 # top 10 company-locations according to mean salary
 top_cmp_locations = df.groupby('company_location')['salary'].mean().sort_values(ascending=False).head(10).round(2)
 print('top 10 company-locations according to mean salary\n',top_cmp_locations)
 
 plt.figure(figsize=(16, 5))
-# top 10 company-locations according to mean salary
+
 plt.subplot(1, 2, 1)
 ax = sns.barplot(y=top_cmp_locations.index, x=top_cmp_locations)
 ax.set_ylabel('Company Location', fontsize=13)
 ax.set_xlabel('Mean Salary', fontsize=13)
 ax.set_title('Top 10 countries according to DS mean salaries', fontsize=16)
-# top 10 company-locations having most job opportunities
+
 top_cl = df['company_location'].value_counts().head(10)
 plt.subplot(1, 2, 2)
 ax = sns.barplot(x=top_cl, y=top_cl.index)
@@ -361,20 +289,17 @@ ax.set_title('Top 10 countries having most DS job opportunities', fontsize=16)
 plt.tight_layout()
 plt.show()
 
-
 # top 10 employee-residence according to mean salary
 top_emp_residence = df.groupby('employee_residence')['salary'].mean().sort_values(ascending=False).head(10).round(2)
 print('top 10 employee-residence according to mean salary\n',top_emp_residence)
 
-
-# top 10 employee-residence according to mean salary
 plt.figure(figsize=(16, 5))
 plt.subplot(1,2,1)
 ax = sns.barplot(y=top_emp_residence.index, x=top_emp_residence)
 ax.set_ylabel('Employee residence', fontsize=13)
 ax.set_xlabel('Mean Salary', fontsize=13)
 ax.set_title('Top 10 employee-residence according to mean DS salary', fontsize=16)
-# top 10 employee-residence according to number of job openings
+
 plt.subplot(1,2,2)
 top_er = df['employee_residence'].value_counts().head(10)
 ax = sns.barplot(x=top_er, y=top_er.index)
@@ -396,14 +321,12 @@ ax.legend(title= 'Job Type')
 plt.tight_layout()
 plt.show()
 
-
 # Job count by year
 yearly_jobs = df['work_year'].value_counts().sort_index()
 print("\nJob Count by Year:")
 print(yearly_jobs)
 
 # Work Year Salary Trend
-
 salary_by_year = (df.groupby("work_year")["salary"].mean().sort_index())
 print("\nAverage Salary by Year:\n", salary_by_year)
 
